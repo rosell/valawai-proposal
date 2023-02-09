@@ -1,0 +1,122 @@
+asyncapi: '2.6.0'
+info:
+  title: VALAWAI
+  version: 1.0.0
+  description: This service define the interaction b etween the VALAWAI components
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+tags:
+  - name: "C0"
+    description: "The componets defined on the VALAWAY C0 level"
+  - name: "C1"
+    description: "The componets defined on the VALAWAY C1 level"
+  - name: "C2"
+    description: "The componets defined on the VALAWAY C2 level"
+channels:
+  c0/sampling_detection:
+    subscribe:
+      operationId: c0_sampling_detection
+      summary: Notify the period to do the sampling
+      tags:
+        - name: "C0"
+      message:
+        $ref: '#/components/messages/SamplingPeriod'
+  c1/awareness_detection:
+    description: Detect awareness from features.
+    subscribe:
+      operationId: c1_awareness_detection
+      summary: Notify the detected features
+      tags:
+        - name: "C1"
+      message:
+        $ref: '#/components/messages/Feature'
+  c2/norm_validator:
+    description: Validate the norms.
+    subscribe:
+      operationId: c2_norm_validator
+      summary: Notify the detected awareness
+      tags:
+        - name: "C2"
+      message:
+        $ref: '#/components/messages/Awareness'
+components:
+  messages:
+    SamplingPeriod:
+      description: The message that specify the sampling period
+      messageId: valaway_sample_period
+      payload:
+        type: object
+        properties:
+          period:
+            description: The nano seconds that the detector has to do a sampling
+            type: number
+            nullable: false
+            min: 0
+            example: 500000
+        required:
+          - period
+    Feature:
+      description: A feature that has been found.
+      messageId: valaway_feature
+      payload:
+        type: object
+        properties:
+          id:
+            description: The identifier of the feature.
+            type: string
+            nullable: false
+            example: "F-1"
+          confidence:
+            description: The confidence level that the detected feature is right.
+            type: number
+            nullable: false
+            min: 0 
+            max: 1
+            example: 0.85
+          timestamp:
+            description: The seconds since JAN 01 1970 (UTC) when the feature is detected.
+            type: number
+            nullable: false
+            min: 0
+            example: 1675847645
+          name:
+            description: A name that cna use a human undestand the feature.
+            type: string
+            nullable: true
+            example: User Age
+          value:
+            description: the value associated to the feature.
+            type: object
+        required:
+          - id
+          - confidence
+          - timestamp
+    Awareness:
+      description: An awarness that has been found.
+      messageId: valaway_awarness
+      payload:
+        type: object
+        properties:
+          id:
+            description: The identifier of the feature.
+            type: string
+            nullable: false
+            example: "A-1"
+          timestamp:
+            description: The seconds since JAN 01 1970 (UTC) when the awarness is detected.
+            type: number
+            nullable: false
+            min: 0
+            example: 1675847645
+          name:
+            description: A name that can use a human undestand the awarness.
+            type: string
+            nullable: true
+            example: User Age
+          value:
+            description: the value associated to the awarness.
+            type: object
+        required:
+          - id
+          - timestamp
